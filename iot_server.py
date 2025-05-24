@@ -8,7 +8,7 @@ import numpy as np
 
 # 녹화 설정
 RECORD_DIR = "/home/rpm/cctv_recordings"
-RECORD_CHUNK = 3600  # 1시간 단위 분할
+RECORD_CHUNK = 600  # 10분 단위 분할
 RECORD_QUALITY = 23  # H.264 품질 (0=최고, 50=최저)
 
 class VideoRecorder:
@@ -58,7 +58,7 @@ class VideoRecorder:
         if self.current_writer:
             self.current_writer.release()
             self.current_writer = None
-            
+
         self._create_writer()
 
 # 서버 초기화
