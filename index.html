@@ -1,46 +1,71 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Real-Time CCTV</title>
+    <title>실시간 CCTV + 녹화</title>
     <meta charset="UTF-8">
     <style>
         body { 
-            margin: 0; 
-            background: #1a1a1a; 
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            margin: 20px; 
+            background: #2c3e50;
+            color: white;
+            font-family: 'Arial', sans-serif;
         }
         #videoContainer {
             text-align: center;
+            margin: 20px auto;
+            max-width: 800px;
         }
-        #videoFeed { 
-            max-width: 640px;
-            width: 100%;
-            height: auto;
-            border: 2px solid #333;
-            border-radius: 8px;
+        #videoFeed {
+            border: 3px solid #3498db;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
         }
-        .status {
+        .controls {
+            margin: 20px 0;
+        }
+        button {
+            padding: 12px 25px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        #startBtn {
+            background: #2ecc71;
             color: white;
-            margin-top: 10px;
+        }
+        #stopBtn {
+            background: #e74c3c;
+            color: white;
         }
     </style>
 </head>
 <body>
     <div id="videoContainer">
-        <img id="videoFeed" src="/stream.mjpg" alt="카메라 스트림">
-        <div class="status">실시간 카메라 피드</div>
+        <img id="videoFeed" src="/stream.mjpg" width="640" height="480">
+        <div class="controls">
+            <button id="startBtn">녹화 시작</button>
+            <button id="stopBtn">녹화 중지</button>
+        </div>
     </div>
-    
+
     <script>
-        // 이미지 로드 실패 시 재시도
-        document.getElementById('videoFeed').onerror = function() {
-            setTimeout(() => {
-                this.src = '/stream.mjpg?' + new Date().getTime();
-            }, 1000);
-        };
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+
+        async function controlRecording(action) {
+            try {
+                const response = await fetch(`/record?action=${action}`);
+                alert(await response.text());
+            } catch (error) {
+                alert('오류 발생: ' + error.message);
+            }
+        }
+
+        startBtn.onclick = () => controlRecording('start');
+        stopBtn.onclick = () => controlRecording('stop');
     </script>
 </body>
 </html>
