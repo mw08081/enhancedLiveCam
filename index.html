@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Real-Time CCTV</title>
+    <meta charset="UTF-8">
+    <style>
+        body { 
+            margin: 0; 
+            background: #1a1a1a; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        #videoContainer {
+            text-align: center;
+        }
+        #videoFeed { 
+            max-width: 640px;
+            width: 100%;
+            height: auto;
+            border: 2px solid #333;
+            border-radius: 8px;
+        }
+        .status {
+            color: white;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="videoContainer">
+        <img id="videoFeed" src="/stream.mjpg" alt="카메라 스트림">
+        <div class="status">실시간 카메라 피드</div>
+    </div>
+    
+    <script>
+        // 이미지 로드 실패 시 재시도
+        document.getElementById('videoFeed').onerror = function() {
+            setTimeout(() => {
+                this.src = '/stream.mjpg?' + new Date().getTime();
+            }, 1000);
+        };
+    </script>
+</body>
+</html>
