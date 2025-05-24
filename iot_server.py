@@ -26,6 +26,7 @@ class VideoRecorder:
         self.is_recording = False
         if self.current_writer:
             self.current_writer.release()
+            self.current_writer = None 
 
     async def _write_worker(self):
         while self.is_recording:
@@ -39,9 +40,13 @@ class VideoRecorder:
             self.current_writer.write(cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
 
     def _create_writer(self):
+        if self.current_writer:
+            self.current_writer.release()
+            self.current_writer = None
+
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"{RECORD_DIR}/{timestamp}.mp4"
-        fourcc = cv2.VideoWriter_fourcc(*'H264')
+        fourcc = cv2.VideoWriter_fourcc(*'avc1') 
         self.current_writer = cv2.VideoWriter(
             filename, fourcc, 30, (640, 480), isColor=True
         )
@@ -52,6 +57,8 @@ class VideoRecorder:
     def _rotate_writer(self):
         if self.current_writer:
             self.current_writer.release()
+            self.current_writer = None
+            
         self._create_writer()
 
 # 서버 초기화
