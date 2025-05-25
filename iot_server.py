@@ -19,6 +19,10 @@ class VideoRecorder:
         self.queue = asyncio.Queue(maxsize=30)
 
     async def start(self):
+        if self.is_recording:
+            print("이미 녹화 중입니다.")
+            return
+            
         self.is_recording = True
         asyncio.create_task(self._write_worker())
 
@@ -71,7 +75,7 @@ async def setup_app():
     config = app['picam2'].create_video_configuration(
         main={"size": (640, 480)},
         encode="main",
-        buffer_count=4
+        buffer_count=4,
     )
     app['picam2'].configure(config)
     app['picam2'].start()
@@ -106,7 +110,8 @@ async def mjpeg_stream(request):
                 await request.app['recorder'].queue.put(frame.copy())
 
             # MJPEG 스트림 생성
-            ret, jpeg = cv2.imencode('.jpg', frame)
+            rgb_frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+            ret, jpeg = cv2.imencode('.jpg', rgb_frame)
             await response.write(
                 b'--frame\r\n'
                 b'Content-Type: image/jpeg\r\n\r\n' + 
